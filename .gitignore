@@ -1,0 +1,26 @@
+# Node
+node_modules/
+npm-debug.log
+.next/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+.env
+
+# AI Agent / Skills (Local data to ignore)
+skills/
+.gemini/
+
+# System / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Temp
+test_images/
+*.log
