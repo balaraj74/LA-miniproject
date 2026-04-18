@@ -2,6 +2,8 @@
 node_modules/
 npm-debug.log
 .next/
+.vercel/
+frontend/.vercel/
 
 # Python
 __pycache__/
@@ -24,3 +26,5 @@ skills/
 # Temp
 test_images/
 *.log
+backend/*.png
+backend/*.json

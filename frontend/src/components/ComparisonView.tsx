@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Download, FileInfo, ArrowRight } from 'lucide-react';
+import { Download, FileText, ArrowRight } from 'lucide-react';
 
 interface ComparisonViewProps {
   originalUrl: string;
