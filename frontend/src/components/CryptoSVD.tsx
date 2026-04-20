@@ -42,11 +42,59 @@ export default function CryptoSVD() {
   const [loadingStage, setLoadingStage] = useState<'encrypt' | 'decrypt' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const onDropOriginal = useCallback((acceptedFiles: File[]) => {
+  const resizeImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const MAX_DIM = 512;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height *= MAX_DIM / width));
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width *= MAX_DIM / height));
+            height = MAX_DIM;
+          }
+        } else {
+          resolve(file);
+          URL.revokeObjectURL(url);
+          return;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(file); 
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const newFile = new File([blob], file.name, { type: 'image/png' });
+            resolve(newFile);
+          } else {
+            resolve(file);
+          }
+          URL.revokeObjectURL(url);
+        }, 'image/png');
+      };
+      img.onerror = () => resolve(file);
+      img.src = url;
+    });
+  };
+
+  const onDropOriginal = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const selectedFile = acceptedFiles[0];
-      setFile(selectedFile);
-      setOriginalUrl(URL.createObjectURL(selectedFile));
+      const resizedFile = await resizeImage(selectedFile);
+      setFile(resizedFile);
+      setOriginalUrl(URL.createObjectURL(resizedFile));
       setEncryptedUrl(null);
       setDecryptedUrl(null);
       setError(null);
